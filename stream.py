@@ -2,22 +2,14 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-
-# ============================================================
 # PAGE CONFIGURATION
-# ============================================================
-
 st.set_page_config(
     page_title="NYC 311 Complaint Intelligence",
     page_icon="🏙️",
     layout="wide"
 )
 
-
-# ============================================================
 # LOAD DATA
-# ============================================================
-
 @st.cache_data
 def load_data():
 
@@ -25,19 +17,13 @@ def load_data():
         "my_data_with_emotions.csv"
     )
 
-    # --------------------------------------------------------
     # Convert created date
-    # --------------------------------------------------------
-
     df["created_date"] = pd.to_datetime(
         df["created_date"],
         errors="coerce"
     )
-
-    # --------------------------------------------------------
     # Coordinates
-    # --------------------------------------------------------
-
+   
     df["latitude"] = pd.to_numeric(
         df["latitude"],
         errors="coerce"
@@ -48,10 +34,7 @@ def load_data():
         errors="coerce"
     )
 
-    # --------------------------------------------------------
     # Time Features
-    # --------------------------------------------------------
-
     df["Month"] = df["created_date"].dt.month
 
     df["Month Name"] = (
@@ -79,11 +62,7 @@ def load_data():
 
 df = load_data()
 
-
-# ============================================================
 # NAVIGATION
-# ============================================================
-
 st.sidebar.title("📌 Navigation")
 
 page = st.sidebar.radio(
@@ -95,18 +74,8 @@ page = st.sidebar.radio(
 )
 
 
-# ============================================================
-# ============================================================
 #                    ANALYSIS PAGE
-# ============================================================
-# ============================================================
-
 if page == "🏙️ Analysis":
-
-    # ========================================================
-    # TITLE
-    # ========================================================
-
     st.title(
         "🏙️ NYC 311 Complaints Dashboard"
     )
@@ -115,20 +84,12 @@ if page == "🏙️ Analysis":
         "### Analysis of NYC 311 complaints for 2022"
     )
 
-
-    # ========================================================
     # SIDEBAR FILTERS
-    # ========================================================
-
     st.sidebar.divider()
 
     st.sidebar.title("🔎 Analysis Filters")
 
-
-    # ========================================================
     # AGENCY
-    # ========================================================
-
     agency_values = sorted(
         df["agency"]
         .dropna()
@@ -142,11 +103,7 @@ if page == "🏙️ Analysis":
         default=agency_values
     )
 
-
-    # ========================================================
     # STATUS
-    # ========================================================
-
     status_values = sorted(
         df["status"]
         .dropna()
@@ -160,11 +117,7 @@ if page == "🏙️ Analysis":
         default=status_values
     )
 
-
-    # ========================================================
     # SENTIMENT
-    # ========================================================
-
     sentiment_values = sorted(
         df["Sentiment"]
         .dropna()
@@ -178,11 +131,7 @@ if page == "🏙️ Analysis":
         default=sentiment_values
     )
 
-
-    # ========================================================
     # EMOTION
-    # ========================================================
-
     emotion_values = sorted(
         df["Emotion"]
         .dropna()
@@ -196,11 +145,7 @@ if page == "🏙️ Analysis":
         default=emotion_values
     )
 
-
-    # ========================================================
     # COMPLAINT TYPE
-    # ========================================================
-
     complaint_values = sorted(
         df["complaint_type"]
         .dropna()
@@ -214,11 +159,7 @@ if page == "🏙️ Analysis":
         default=complaint_values
     )
 
-
-    # ========================================================
     # MONTH
-    # ========================================================
-
     month_names = [
         "Jan",
         "Feb",
@@ -240,11 +181,7 @@ if page == "🏙️ Analysis":
         default=month_names
     )
 
-
-    # ========================================================
     # HOUR
-    # ========================================================
-
     selected_hours = st.sidebar.slider(
         "Hour of Day",
         min_value=0,
@@ -252,11 +189,7 @@ if page == "🏙️ Analysis":
         value=(0, 23)
     )
 
-
-    # ========================================================
     # FILTER DATA
-    # ========================================================
-
     filtered_df = df[
         (df["agency"].isin(selected_agencies))
         &
@@ -278,18 +211,13 @@ if page == "🏙️ Analysis":
         )
     ].copy()
 
-
-    # ========================================================
     # KPI SECTION
-    # ========================================================
-
     st.subheader("📊 Overview")
 
     col1, col2, col3, col4 = st.columns(4)
 
 
     # Total complaints
-
     with col1:
 
         st.metric(
@@ -299,7 +227,6 @@ if page == "🏙️ Analysis":
 
 
     # Complaint types
-
     with col2:
 
         st.metric(
@@ -311,7 +238,6 @@ if page == "🏙️ Analysis":
 
 
     # Agencies
-
     with col3:
 
         st.metric(
@@ -323,7 +249,6 @@ if page == "🏙️ Analysis":
 
 
     # Negative percentage
-
     with col4:
 
         if len(filtered_df) > 0:
@@ -349,19 +274,10 @@ if page == "🏙️ Analysis":
 
     st.divider()
 
-
-    # ========================================================
-    # ROW 1
-    # COMPLAINT + SENTIMENT
-    # ========================================================
-
+    # ROW 1 -> COMPLAINT + SENTIMENT
     col1, col2 = st.columns(2)
 
-
-    # ========================================================
     # TOP COMPLAINT TYPES
-    # ========================================================
-
     with col1:
 
         st.subheader(
@@ -402,11 +318,7 @@ if page == "🏙️ Analysis":
             use_container_width=True
         )
 
-
-    # ========================================================
     # SENTIMENT
-    # ========================================================
-
     with col2:
 
         st.subheader(
@@ -444,11 +356,7 @@ if page == "🏙️ Analysis":
             use_container_width=True
         )
 
-
-    # ========================================================
     # EMOTION DISTRIBUTION
-    # ========================================================
-
     st.subheader(
         "😊 Emotion Distribution"
     )
@@ -479,11 +387,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # AGENCY VS STATUS
-    # ========================================================
-
     st.subheader(
         "🏢 Complaint Status by Agency"
     )
@@ -513,11 +417,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # TOP 5 VS LOCATION
-    # ========================================================
-
     st.subheader(
         "🔥 Top 5 Complaint Types vs Location Type"
     )
@@ -567,11 +467,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # COMPLAINT TYPE OVER TIME
-    # ========================================================
-
     st.subheader(
         "📈 Complaint Type Over Time"
     )
@@ -654,11 +550,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # COMPLAINT TYPE × MONTH
-    # ========================================================
-
     st.subheader(
         "🔥 Complaint Type × Month"
     )
@@ -698,11 +590,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # COMPLAINT TYPE × HOUR
-    # ========================================================
-
     st.subheader(
         "🕐 Complaint Type × Hour"
     )
@@ -766,11 +654,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # TOTAL COMPLAINTS BY HOUR
-    # ========================================================
-
     st.subheader(
         "⏰ Complaints by Hour"
     )
@@ -813,11 +697,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # DAY OF WEEK
-    # ========================================================
-
     st.subheader(
         "📅 Complaints by Day of Week"
     )
@@ -860,11 +740,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # DAY × COMPLAINT TYPE
-    # ========================================================
-
     st.subheader(
         "📅 Complaint Type × Day of Week"
     )
@@ -921,11 +797,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # TIME + LOCATION MAP
-    # ========================================================
-
     st.subheader(
         "🗺️ Complaints by Time and Location"
     )
@@ -954,7 +826,6 @@ if page == "🏙️ Analysis":
             "latitude": False,
             "longitude": False,
             "complaint_type": True,
-            "descriptor": True,
             "agency": True,
             "status": True,
             "location_type": True,
@@ -990,10 +861,432 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
+    # CATEGORY × SENTIMENT MAPS
+    st.subheader("🗺️ Complaint Maps by Category and Sentiment")
 
-    # ========================================================
+    # Keep only rows with valid coordinates
+    map_df = filtered_df.dropna(
+        subset=["latitude", "longitude"]
+    ).copy()
+
+    # NYC map settings
+    NYC_CENTER = {
+        "lat": 40.7128,
+        "lon": -74.0060
+    }
+
+    # Function to create each map
+    def create_sentiment_map(data, category, sentiment):
+
+        # Filter by category and sentiment
+        subset = data[
+            (data["Category"] == category)
+            &
+            (data["Sentiment"] == sentiment)
+        ].copy()
+
+
+        # If there is no data
+        if subset.empty:
+            return None
+
+
+        # Sentiment colors
+        sentiment_colors = {
+            "Positive": "green",
+            "Negative": "red",
+            "Neutral": "blue"
+        }
+
+
+        fig = px.scatter_map(
+            subset,
+
+            lat="latitude",
+            lon="longitude",
+
+            color="Sentiment",
+
+            color_discrete_map={
+                sentiment: sentiment_colors[sentiment]
+            },
+
+            hover_name="complaint_type",
+
+            hover_data={
+                "latitude": False,
+                "longitude": False,
+                "complaint_type": True,
+                "agency": True,
+                "status": True,
+                "location_type": True,
+                "Sentiment": True,
+                "Emotion": True
+            },
+
+            center=NYC_CENTER,
+
+            zoom=9.5,
+
+            height=450,
+
+            title=f"{category} - {sentiment}"
+        )
+
+
+        fig.update_traces(
+            marker={
+                "size": 6,
+                "opacity": 0.65
+            }
+        )
+
+
+        fig.update_layout(
+            margin={
+                "r": 0,
+                "t": 50,
+                "l": 0,
+                "b": 0
+            },
+
+            showlegend=False
+        )
+
+
+        return fig
+
+    # POLITICAL MAPS
+
+    st.markdown("## 🏛️ Political Complaints")
+
+    col1, col2, col3 = st.columns(3)
+
+
+    with col1:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Political",
+            "Positive"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Positive Political complaints found.")
+
+
+    with col2:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Political",
+            "Negative"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Negative Political complaints found.")
+
+
+    with col3:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Political",
+            "Neutral"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Neutral Political complaints found.")
+
+    # ECONOMIC MAPS
+
+    st.markdown("## 💰 Economic Complaints")
+
+    col1, col2, col3 = st.columns(3)
+
+
+    with col1:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Economic",
+            "Positive"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Positive Economic complaints found.")
+
+
+    with col2:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Economic",
+            "Negative"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Negative Economic complaints found.")
+
+
+    with col3:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Economic",
+            "Neutral"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Neutral Economic complaints found.")
+
+    # SOCIAL MAPS
+
+    st.markdown("## 👥 Social Complaints")
+
+    col1, col2, col3 = st.columns(3)
+
+
+    with col1:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Social",
+            "Positive"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Positive Social complaints found.")
+
+
+    with col2:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Social",
+            "Negative"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Negative Social complaints found.")
+
+
+    with col3:
+
+        fig = create_sentiment_map(
+            map_df,
+            "Social",
+            "Neutral"
+        )
+
+        if fig is not None:
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+        else:
+            st.info("No Neutral Social complaints found.")
+
+    # EMOTION MAPS BY CATEGORY
+
+    st.subheader("😊 NYC Complaint Emotion Maps by Category")
+
+
+    # Remove rows without coordinates, emotion, or category
+    emotion_map_df = filtered_df.dropna(
+        subset=[
+            "latitude",
+            "longitude",
+            "Emotion",
+            "Category"
+        ]
+    ).copy()
+
+    # FUNCTION TO CREATE EMOTION MAP
+
+    def create_emotion_map(data, category):
+
+        # Filter data for one category
+        subset = data[
+            data["Category"] == category
+        ].copy()
+
+
+        # Check if there is data
+        if subset.empty:
+            return None
+
+
+        # Create map
+        fig = px.scatter_map(
+            subset,
+
+            lat="latitude",
+            lon="longitude",
+
+            # Different color for each emotion
+            color="Emotion",
+
+            hover_name="complaint_type",
+
+            hover_data={
+                "latitude": False,
+                "longitude": False,
+                "complaint_type": True,
+                "agency": True,
+                "status": True,
+                "location_type": True,
+                "Sentiment": True,
+                "Emotion": True,
+                "Category": True
+            },
+
+            center={
+                "lat": 40.7128,
+                "lon": -74.0060
+            },
+
+            zoom=9.5,
+
+            height=500,
+
+            title=f"{category} Complaints by Emotion"
+        )
+
+
+        # Point appearance
+        fig.update_traces(
+            marker={
+                "size": 6,
+                "opacity": 0.7
+            }
+        )
+
+
+        fig.update_layout(
+            legend_title="Emotion",
+
+            margin={
+                "r": 0,
+                "t": 50,
+                "l": 0,
+                "b": 0
+            }
+        )
+
+
+        return fig
+
+    # THREE EMOTION MAPS SIDE BY SIDE
+    emotion_col1, emotion_col2, emotion_col3 = st.columns(3)
+
+    # POLITICAL MAP
+
+    with emotion_col1:
+
+        fig_political_emotion = create_emotion_map(
+            emotion_map_df,
+            "Political"
+        )
+
+        if fig_political_emotion is not None:
+
+            st.plotly_chart(
+                fig_political_emotion,
+                use_container_width=True
+            )
+
+        else:
+
+            st.info(
+                "No Political complaints found."
+            )
+
+    # ECONOMIC MAP
+
+    with emotion_col2:
+
+        fig_economic_emotion = create_emotion_map(
+            emotion_map_df,
+            "Economic"
+        )
+
+        if fig_economic_emotion is not None:
+
+            st.plotly_chart(
+                fig_economic_emotion,
+                use_container_width=True
+            )
+
+        else:
+
+            st.info(
+                "No Economic complaints found."
+            )
+
+    # SOCIAL MAP
+
+    with emotion_col3:
+
+        fig_social_emotion = create_emotion_map(
+            emotion_map_df,
+            "Social"
+        )
+
+        if fig_social_emotion is not None:
+
+            st.plotly_chart(
+                fig_social_emotion,
+                use_container_width=True
+            )
+
+        else:
+
+            st.info(
+                "No Social complaints found."
+            )
+
     # TIME PERIOD
-    # ========================================================
 
     st.subheader(
         "🌙 Complaint Distribution "
@@ -1064,10 +1357,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # TIME PERIOD × COMPLAINT TYPE
-    # ========================================================
 
     st.subheader(
         "🌙 Complaint Type × Time Period"
@@ -1116,11 +1406,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # SENTIMENT × EMOTION
-    # ========================================================
-
     st.subheader(
         "💭 Sentiment × Emotion"
     )
@@ -1155,10 +1441,7 @@ if page == "🏙️ Analysis":
         use_container_width=True
     )
 
-
-    # ========================================================
     # FILTERED DATA
-    # ========================================================
 
     st.divider()
 
@@ -1176,12 +1459,7 @@ if page == "🏙️ Analysis":
         height=400
     )
 
-
-# ============================================================
-# ============================================================
 #                 MACHINE LEARNING PAGE
-# ============================================================
-# ============================================================
 
 elif page == "🤖 Machine Learning":
 
@@ -1203,11 +1481,8 @@ elif page == "🤖 Machine Learning":
 
     st.divider()
 
-
-    # ========================================================
     # LOAD MODELS
-    # ========================================================
-
+ 
     @st.cache_resource
     def load_ml_models():
 
@@ -1220,10 +1495,7 @@ elif page == "🤖 Machine Learning":
             else -1
         )
 
-
-        # ----------------------------------------------------
         # SENTIMENT MODEL
-        # ----------------------------------------------------
 
         sentiment_model = pipeline(
             "sentiment-analysis",
@@ -1234,10 +1506,7 @@ elif page == "🤖 Machine Learning":
             device=device
         )
 
-
-        # ----------------------------------------------------
         # EMOTION MODEL
-        # ----------------------------------------------------
 
         emotion_model = pipeline(
             "text-classification",
@@ -1255,11 +1524,7 @@ elif page == "🤖 Machine Learning":
             emotion_model
         )
 
-
-    # ========================================================
     # LOAD MODELS
-    # ========================================================
-
     with st.spinner(
         "Loading machine learning models..."
     ):
@@ -1268,11 +1533,7 @@ elif page == "🤖 Machine Learning":
             load_ml_models()
         )
 
-
-    # ========================================================
     # USER INPUT
-    # ========================================================
-
     st.subheader(
         "📝 Enter Complaint"
     )
@@ -1287,21 +1548,14 @@ elif page == "🤖 Machine Learning":
         height=180
     )
 
-
-    # ========================================================
     # ANALYZE BUTTON
-    # ========================================================
-
     analyze_button = st.button(
         "🔍 Analyze Complaint",
         type="primary",
         use_container_width=True
     )
 
-
-    # ========================================================
     # ANALYSIS
-    # ========================================================
 
     if analyze_button:
 
@@ -1316,11 +1570,7 @@ elif page == "🤖 Machine Learning":
             with st.spinner(
                 "Analyzing complaint..."
             ):
-
-                # --------------------------------------------
                 # SENTIMENT
-                # --------------------------------------------
-
                 sentiment_result = (
                     sentiment_model(
                         complaint_text,
@@ -1336,11 +1586,7 @@ elif page == "🤖 Machine Learning":
                     sentiment_result["score"]
                 )
 
-
-                # --------------------------------------------
                 # EMOTION
-                # --------------------------------------------
-
                 emotion_result = (
                     emotion_model(
                         complaint_text,
@@ -1357,11 +1603,7 @@ elif page == "🤖 Machine Learning":
                     emotion_result["score"]
                 )
 
-
-            # =================================================
             # RESULTS
-            # =================================================
-
             st.divider()
 
             st.subheader(
@@ -1371,10 +1613,7 @@ elif page == "🤖 Machine Learning":
 
             col1, col2 = st.columns(2)
 
-
-            # =================================================
             # SENTIMENT RESULT
-            # =================================================
 
             with col1:
 
@@ -1403,11 +1642,7 @@ elif page == "🤖 Machine Learning":
                     f"{sentiment_score:.2%}"
                 )
 
-
-            # =================================================
             # EMOTION RESULT
-            # =================================================
-
             with col2:
 
                 st.markdown(
@@ -1427,10 +1662,7 @@ elif page == "🤖 Machine Learning":
                     f"{emotion_score:.2%}"
                 )
 
-
-            # =================================================
             # COMPLAINT TEXT
-            # =================================================
 
             st.divider()
 
@@ -1442,11 +1674,7 @@ elif page == "🤖 Machine Learning":
                 complaint_text
             )
 
-
-            # =================================================
             # RESULT TABLE
-            # =================================================
-
             result_df = pd.DataFrame(
                 {
                     "Analysis": [
@@ -1475,9 +1703,7 @@ elif page == "🤖 Machine Learning":
             )
 
 
-            # =================================================
             # INTERPRETATION
-            # =================================================
 
             st.subheader(
                 "💡 Interpretation"
