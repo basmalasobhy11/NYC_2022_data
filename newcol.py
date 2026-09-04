@@ -3,28 +3,20 @@ import torch
 from transformers import pipeline
 
 
-# ============================================================
-# SETTINGS
-# ============================================================
+INPUT_FILE = "my_data2.csv"
+OUTPUT_FILE = "Final_File.csv"
 
-INPUT_FILE = "my_data.csv"
-OUTPUT_FILE = "my_data_with_emotions.csv"
-
-
-# ============================================================
 # LOAD DATA
-# ============================================================
 
 print("Loading dataset...")
+df=pd.read_csv(INPUT_FILE)
 
-df = pd.read_csv(INPUT_FILE)
+allowed_categories = ["Social", "Economic", "Political"]
+df = df[df["Category"].isin(allowed_categories)].copy()
 
 print(f"Loaded {len(df):,} complaints.")
 
-
-# ============================================================
 # CREATE TEXT FOR EMOTION ANALYSIS
-# ============================================================
 
 # Combine complaint_type and descriptor
 # because they provide more information about the complaint.
@@ -35,10 +27,7 @@ df["Complaint Text"] = (
     + df["descriptor"].fillna("").astype(str)
 )
 
-
-# ============================================================
 # LOAD EMOTION MODEL
-# ============================================================
 
 print("Loading emotion model...")
 
@@ -50,10 +39,7 @@ emotion_classifier = pipeline(
     device=device
 )
 
-
-# ============================================================
 # FUNCTION TO PREDICT EMOTION
-# ============================================================
 
 def predict_emotion(text):
 
@@ -75,10 +61,7 @@ def predict_emotion(text):
 
         return "Unknown"
 
-
-# ============================================================
 # PREDICT EMOTIONS
-# ============================================================
 
 print("Analyzing emotions...")
 print("This may take some time for a large dataset.")
@@ -89,19 +72,14 @@ df["Emotion"] = df["Complaint Text"].apply(
 )
 
 
-# ============================================================
 # SAVE DATASET
-# ============================================================
 
 df.to_csv(
     OUTPUT_FILE,
     index=False
 )
 
-
-# ============================================================
 # RESULTS
-# ============================================================
 
 print()
 print("=" * 60)
